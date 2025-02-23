@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>JoinUp</title>
+    <%= stylesheet_link_tag "", "tailwind", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload" %>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <!-- application.html.erb 等でCDN読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.7/index.global.min.js"></script>
+</head>
+
+<!-- 全画面の背景色や文字色など -->
+
+<body class="bg-gray-100 text-gray-900 min-h-screen">
+
+    <!-- flexコンテナで左サイドバー + 右メインコンテンツ -->
+    <div class="flex">
+
+        <!-- サイドバー -->
+        <div class="w-64 bg-gray-800 text-white min-h-screen px-4 py-6">
+            <!-- ロゴやアプリ名など -->
+            <h2 class="text-2xl font-bold mb-6">JoinUp</h2>
+
+            <!-- ナビゲーションメニュー例 -->
+            <nav>
+                <ul>
+                    <li class="mb-2">
+                        <%= link_to "Meetings", meetings_path, 
+                  class: "block py-2 px-2 rounded hover:bg-gray-700 hover:text-gray-300" %>
+                    </li>
+                    <li class="mb-2">
+                        <%= link_to "Users", "#", 
+                  class: "block py-2 px-2 rounded hover:bg-gray-700 hover:text-gray-300" %>
+                    </li>
+                    <li class="mb-2">
+                        <%= link_to "Settings", "#", 
+                  class: "block py-2 px-2 rounded hover:bg-gray-700 hover:text-gray-300" %>
+                    </li>
+                    <!-- 必要に応じて追加 -->
+                </ul>
+            </nav>
+        </div>
+
+        <!-- メインコンテンツ部分 -->
+        <div class="flex-1 p-8">
+            <%= yield %>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

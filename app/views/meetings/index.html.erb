@@ -1,0 +1,98 @@
+<!-- モーダル（初期状態: hidden） -->
+<div id="event-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white p-6 rounded shadow w-96">
+        <h2 id="modal-title" class="text-xl font-bold mb-2">Title</h2>
+        <p id="modal-time" class="text-sm text-gray-600 mb-2"></p>
+        <p id="modal-location" class="text-sm text-gray-600 mb-4"></p>
+
+        <!-- 出席ボタン -->
+        <button id="attend-btn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mr-2">
+            Attend
+        </button>
+        <!-- 閉じるボタン -->
+        <button onclick="closeModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded">
+            Close
+        </button>
+    </div>
+</div>
+
+<!-- カレンダー表示エリア -->
+<div id="calendar"></div>
+
+<script>
+    // モーダルを開く関数
+    function openModal(event) {
+        const modal = document.getElementById("event-modal");
+        if (!modal) return;
+
+        // タイトル等をセット
+        document.getElementById("modal-title").innerText = event.title;
+        // start / end は "Tue Feb 28 2025 10:00:00 GMT+0900" のようなDateオブジェクト
+        // 表示形式を整えるなら toLocaleString() や dayjs/moment などを利用
+        document.getElementById("modal-time").innerText = `${event.start} - ${event.end}`;
+        document.getElementById("modal-location").innerText = `Location: ${event.extendedProps.location || ""}`;
+
+        // Attendボタンに、該当イベントのIDを紐づけ（onClickイベント等で使う）
+        const attendBtn = document.getElementById("attend-btn");
+        attendBtn.onclick = function() {
+            // ここでAjaxやfetchを呼んで出席登録するなど
+            attendMeeting(event.id);
+        };
+
+        // モーダル表示
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    }
+
+    // モーダルを閉じる関数
+    function closeModal() {
+        const modal = document.getElementById("event-modal");
+        if (!modal) return;
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    }
+
+    // 出席登録のロジック例（Ajax）
+    function attendMeeting(meetingId) {
+        fetch(`/meetings/${meetingId}/attendances`, {
+                method: "POST",
+                headers: {
+                    "X-CSRF-Token": "<%= form_authenticity_token %>",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    /* extra data if needed */
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert("You have attended the meeting!");
+                // モーダルを閉じる or UI更新
+                closeModal();
+            })
+            .catch(error => {
+                console.error("Attend failed:", error);
+            });
+    }
+
+    // FullCalendar初期化
+    document.addEventListener("DOMContentLoaded", function() {
+        var calendarEl = document.getElementById("calendar");
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: '/meetings.json',
+            eventClick: function(info) {
+                openModal(info.event);
+            },
+            // スクロール・イベント折りたたみ設定など
+            height: 'auto',
+            dayMaxEventRows: true
+        });
+        calendar.render();
+    });
+</script>

@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  meeting: one
+  checkin_time: 2025-02-21 04:12:55
+  checkout_time: 2025-02-21 04:12:55
+
+two:
+  user: two
+  meeting: two
+  checkin_time: 2025-02-21 04:12:55
+  checkout_time: 2025-02-21 04:12:55
